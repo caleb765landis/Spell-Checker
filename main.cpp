@@ -1,11 +1,12 @@
 // main.cpp
 
 #include <vector>
-#include <sstream>
 #include <fstream>
 #include <iostream>
 #include <algorithm> // count()
 #include <stdlib.h> // abs()
+#include "TimeInterval.h"
+
 using namespace std;
 
 struct node {
@@ -14,7 +15,7 @@ struct node {
 };
 
 int hashFunc(string word, int charVal);
-bool search(vector<node*> dictionary, string word);
+void search(vector<node*> dictionary, string word);
 bool suggest(std::vector<string> similarWords, string word);
 int matchingScore (string suggestion, string word);
 
@@ -98,19 +99,20 @@ int hashFunc(string word, int charVal) {
   return hashVal % 26;
 } // end hashFunc
 
-bool search(vector<node*> dictionary, string word) {
+void search(vector<node*> dictionary, string word) {
   bool found = false;
-  bool keepGoing = true;
   std::vector<string> similarWords;
-  int hashKey = tolower(word[0]) - 97;
+  TimeInterval time = TimeInterval();
+  time.start();
 
-  int numNodes = 0;
+  int hashKey = tolower(word[0]) - 97;
   int hashVal = hashFunc(word, hashKey);
   node* currentDictNode = dictionary[hashVal];
+
+  bool keepGoing = true;
   while (keepGoing) {
     if (currentDictNode -> key == word) {
       found = true;
-      numNodes++;
 
       if (currentDictNode -> next != NULL) {
         currentDictNode = currentDictNode -> next;
@@ -127,10 +129,11 @@ bool search(vector<node*> dictionary, string word) {
 
       if (word[1] == currentDictNode -> key[1]) {
         similarWords.push_back(currentDictNode -> key);
-        //cout << currentDictNode -> key << endl;
       } // end if words are similar
     } // end if
   } // end while
+
+  time.stop();
 
   if (found == true) {
     std::cout << "True" << std::endl;
@@ -149,7 +152,7 @@ bool search(vector<node*> dictionary, string word) {
     }
   }
 
-  return found;
+  std::cout << time.GetInterval() << " micro-sec" << std::endl;
 } // end search
 
 bool suggest(std::vector<string> similarWords, string word) {
@@ -168,7 +171,6 @@ bool suggest(std::vector<string> similarWords, string word) {
   bool keepGoing = true;
   while (keepGoing) {
     std::cout << "Did you mean " << bestSuggestion << "? (y or n) ";
-    //std::stringstream input;
     string input;
     std::cin >> input;
 
