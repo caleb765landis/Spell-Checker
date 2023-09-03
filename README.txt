@@ -1,3 +1,6 @@
+# Spell Checker
+## A simple spell checker program demonstrating hashing.
+
 To run the Spell_Checker program, use "make run".
 
 Once the program starts, the terminal will be cleared, and users will be asked to input a word.
